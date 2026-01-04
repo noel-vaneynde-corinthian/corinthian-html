@@ -3,81 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marine Forecast LMZ741</title>
+    <title>Chicago Marine Dashboard - Fill Layout</title>
     <style>
-        /* DARK MODE STYLING */
+        * { box-sizing: border-box; }
         body { 
-            background-color: #000000; 
-            color: #ffffff; 
-            font-family: 'Courier New', Courier, monospace; 
-            padding: 5px 20px 20px 20px; /* Minimal top space */
-            margin: 0;
-            display: flex;
-            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; 
+            padding: 1vw; 
+            background: #1a1c1e; 
+            color: #333; 
+            width: 100vw; 
+            height: 100vh; 
+            overflow: hidden; 
         }
 
-        .forecast-container {
-            max-width: 800px;
-            width: 100%;
-            white-space: pre-wrap; 
-            font-size: 15px;
-            line-height: 1.5;
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: calc(100vh - 2vw);
+            gap: 1vw;
+            align-items: start;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 1vw;
+            height: 100%;
+        }
+
+        .dashboard-section { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            display: flex;
+            flex-direction: column;
         }
 
         h2 { 
-            font-family: sans-serif; 
-            color: #4da3ff; 
-            margin: 0 0 10px 0;
-            padding: 0;
-            font-size: 1.2rem;
+            background-color: #002d5a; 
+            color: white; 
+            margin: 0; 
+            padding: 10px 15px; 
+            font-size: 1.1rem; 
+            border-bottom: 3px solid #0055aa; 
+            height: 50px; 
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
         }
 
-        .loading { color: #888; font-style: italic; }
-        .error { color: #ff5f5f; font-weight: bold; }
+        /* LEFT COLUMN */
+        .radar-section { flex: 0 0 55%; } 
+        .radar-box { width: 100%; height: 100%; padding: 0; margin: 0; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        .forecast-box { flex: 1; overflow: hidden; background: #fff; }
+        #output { 
+            padding: 1vw; 
+            white-space: pre-wrap; 
+            font-family: "Courier New", Courier, monospace; 
+            font-size: 0.75rem; 
+            line-height: 1.4;
+            color: #222;
+        }
+
+        /* RIGHT COLUMN (CRIB DATA) */
+        .data-box { flex: 1; overflow: hidden; height: 100%; }
+        .table-wrapper { 
+            flex: 1; 
+            overflow: hidden; /* Removes scrollbars to keep "Fill" look */
+            background: #fff; 
+        }
+
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { 
+            padding: 0.65vh 2px; /* Tight padding to maximize row count */
+            text-align: center; 
+            border-bottom: 1px solid #eee; 
+            font-size: 0.85rem; 
+            white-space: nowrap;
+        }
+        
+        th { background-color: #f8f9fa; color: #666; font-size: 0.65rem; text-transform: uppercase; }
+        .time-col { font-weight: bold; text-align: left; padding-left: 10px; width: 28%; }
+        .unit-label { font-size: 0.75em; color: #888; margin-left: 1px; }
+
+        .wind-arrow {
+            display: inline-block;
+            font-size: 1rem;
+            margin-left: 4px; /* Space after text */
+            vertical-align: middle;
+            color: #0055aa;
+            font-weight: bold;
+        }
+
+        .loading { padding: 40px; text-align: center; color: #666; font-style: italic; }
+        .error-msg { position: absolute; top: 0; left: 0; right: 0; z-index: 100; color: #d93025; font-weight: bold; padding: 10px; text-align: center; background: #fce8e6; }
+        .footer-info { position: absolute; bottom: 15px; right: 15px; font-size: 0.7rem; color: #777; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="forecast-container">
-    <h2>LMZ741 Marine Forecast</h2>
-    <div id="output" class="loading">Requesting data from NWS...</div>
+<div id="status-area"></div>
+
+<div class="main-grid">
+    <div class="column">
+        <div class="dashboard-section radar-section">
+            <h2>Local Radar - Chicago</h2>
+            <div class="radar-box">
+                <iframe src="https://embed.ventusky.com/?p=41.941;-87.641;10&l=radar" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <div class="dashboard-section forecast-box">
+            <h2>LMZ741 Nearshore Forecast</h2>
+            <div id="output" class="loading">Loading Forecast...</div>
+        </div>
+    </div>
+
+    <div class="column">
+        <div class="dashboard-section data-box">
+            <h2>Harrison-Dever Crib (CHII2)</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="time-col">Time</th>
+                            <th>Dir</th>
+                            <th>Wind</th>
+                            <th>Gust</th>
+                            <th>Wave</th>
+                            <th>Air</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr><td colspan="6" class="loading">Loading Observations...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
+<div id="refresh-time" class="footer-info"></div>
+
 <script>
-    async function fetchForecast() {
-        const output = document.getElementById('output');
-        const target = "https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt";
-        const proxy = "https://corsproxy.io/?" + encodeURIComponent(target);
+    const STATION_URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.ndbc.noaa.gov/data/realtime2/CHII2.txt');
+    const FORECAST_URL = "https://corsproxy.io/?" + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt");
 
+    function getCardinal(deg) {
+        if (deg === 'MM' || isNaN(deg)) return '--';
+        const val = Math.floor((deg / 22.5) + 0.5);
+        const arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+        return arr[(val % 16)];
+    }
+
+    async function updateDashboard() {
         try {
-            const response = await fetch(proxy);
-            if (!response.ok) throw new Error("Could not reach NWS servers.");
+            const stationRes = await fetch(STATION_URL);
+            const stationJson = await stationRes.json();
+            const lines = stationJson.contents.split('\n');
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
             
-            const text = await response.text();
+            // Pull 60 rows to ensure we fill the height of any reasonable screen
+            lines.slice(2, 62).forEach(line => {
+                const c = line.trim().split(/\s+/);
+                if (c.length < 15) return;
 
-            // 1. Cut off the technical codes at the top
+                const utcDate = new Date(Date.UTC(c[0], c[1]-1, c[2], c[3], c[4]));
+                const chicagoTime = utcDate.toLocaleString("en-US", {
+                    timeZone: "America/Chicago", hour: 'numeric', minute: '2-digit', hour12: true
+                });
+
+                const deg = parseFloat(c[5]);
+                const cardinal = getCardinal(deg);
+                // Arrow follows wind direction (points where wind is going)
+                const arrowRotation = isNaN(deg) ? 0 : deg + 180;
+
+                const windKts = c[6] === 'MM' ? '--' : (parseFloat(c[6]) * 1.9438).toFixed(1);
+                const gustKts = c[7] === 'MM' ? '--' : (parseFloat(c[7]) * 1.9438).toFixed(1);
+                const waveFt = c[8] === 'MM' ? '--' : (parseFloat(c[8]) * 3.28084).toFixed(1);
+                const airF = c[13] === 'MM' ? '--' : (parseFloat(c[13]) * 1.8 + 32).toFixed(1);
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td class="time-col">${chicagoTime}</td>
+                        <td style="text-align: center;">
+                            ${cardinal}<span class="wind-arrow" style="transform: rotate(${arrowRotation}deg);">↑</span>
+                        </td>
+                        <td>${windKts}<span class="unit-label">kts</span></td>
+                        <td>${gustKts}<span class="unit-label">kts</span></td>
+                        <td>${waveFt}<span class="unit-label">ft</span></td>
+                        <td>${airF}°<span class="unit-label">F</span></td>
+                    </tr>`;
+            });
+
+            const forecastRes = await fetch(FORECAST_URL);
+            const forecastText = await forecastRes.text();
+            const output = document.getElementById('output');
             const startMarker = "Wilmette Harbor";
-            const index = text.indexOf(startMarker);
-            let finalOutput = (index !== -1) ? text.substring(index) : text;
-
-            // 2. Remove the periods at the start of lines
-            // This looks for a newline followed by a dot and removes just the dot
-            finalOutput = finalOutput.replace(/\n\./g, "\n");
-            
-            // Handle the very first line if it starts with a dot
-            if (finalOutput.startsWith(".")) {
-                finalOutput = finalOutput.substring(1);
-            }
-
-            output.textContent = finalOutput.trim();
+            const index = forecastText.indexOf(startMarker);
+            let finalForecast = (index !== -1) ? forecastText.substring(index) : forecastText;
+            finalForecast = finalForecast.replace(/\n\./g, "\n");
+            output.textContent = finalForecast.trim();
             output.classList.remove('loading');
 
+            document.getElementById('status-area').innerHTML = '';
+            document.getElementById('refresh-time').textContent = "Updated: " + new Date().toLocaleTimeString();
+
         } catch (err) {
-            output.innerHTML = `<span class="error">ERROR: ${err.message}</span>`;
+            document.getElementById('status-area').innerHTML = `<div class="error-msg">⚠️ Update Error. Retrying...</div>`;
+            setTimeout(() => location.reload(), 30000);
         }
     }
 
-    fetchForecast();
+    updateDashboard();
+    setInterval(updateDashboard, 600000);
 </script>
 
 </body>
