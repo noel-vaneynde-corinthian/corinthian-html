@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marine Forecast LMZ741</title>
+    <style>
+        /* DARK MODE STYLING */
+        body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            font-family: 'Courier New', Courier, monospace; 
+            padding: 5px 20px 20px 20px; /* Minimal top space */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .forecast-container {
+            max-width: 800px;
+            width: 100%;
+            white-space: pre-wrap; 
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        h2 { 
+            font-family: sans-serif; 
+            color: #4da3ff; 
+            margin: 0 0 10px 0;
+            padding: 0;
+            font-size: 1.2rem;
+        }
+
+        .loading { color: #888; font-style: italic; }
+        .error { color: #ff5f5f; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="forecast-container">
+    <h2>LMZ741 Marine Forecast</h2>
+    <div id="output" class="loading">Requesting data from NWS...</div>
+</div>
+
+<script>
+    async function fetchForecast() {
+        const output = document.getElementById('output');
+        const target = "https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt";
+        const proxy = "https://corsproxy.io/?" + encodeURIComponent(target);
+
+        try {
+            const response = await fetch(proxy);
+            if (!response.ok) throw new Error("Could not reach NWS servers.");
+            
+            const text = await response.text();
+
+            // 1. Cut off the technical codes at the top
+            const startMarker = "Wilmette Harbor";
+            const index = text.indexOf(startMarker);
+            let finalOutput = (index !== -1) ? text.substring(index) : text;
+
+            // 2. Remove the periods at the start of lines
+            // This looks for a newline followed by a dot and removes just the dot
+            finalOutput = finalOutput.replace(/\n\./g, "\n");
+            
+            // Handle the very first line if it starts with a dot
+            if (finalOutput.startsWith(".")) {
+                finalOutput = finalOutput.substring(1);
+            }
+
+            output.textContent = finalOutput.trim();
+            output.classList.remove('loading');
+
+        } catch (err) {
+            output.innerHTML = `<span class="error">ERROR: ${err.message}</span>`;
+        }
+    }
+
+    fetchForecast();
+</script>
+
+</body>
+</html>
