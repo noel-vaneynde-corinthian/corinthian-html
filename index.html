@@ -3,226 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chicago Marine Dashboard - Fill Layout</title>
+    <title>Chicago Marine Dashboard - CCYC</title>
     <style>
         * { box-sizing: border-box; }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            margin: 0; 
-            padding: 1vw; 
-            background: #1a1c1e; 
-            color: #333; 
-            width: 100vw; 
-            height: 100vh; 
-            overflow: hidden; 
+            margin: 0; padding: 0.5vw; background: #0f172a; color: #333; 
+            width: 100vw; height: 100vh; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column; gap: 0.5vw;
         }
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: calc(100vh - 2vw);
-            gap: 1vw;
-            align-items: start;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 1vw;
-            height: 100%;
-        }
-
-        .dashboard-section { 
-            background: white; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-            display: flex;
-            flex-direction: column;
-        }
-
-        h2 { 
-            background-color: #002d5a; 
-            color: white; 
-            margin: 0; 
-            padding: 10px 15px; 
-            font-size: 1.1rem; 
-            border-bottom: 3px solid #0055aa; 
-            height: 50px; 
+        /* --- Header Section --- */
+        .site-header {
+            background: #1e293b;
+            padding: 12px;
             display: flex;
             align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border-bottom: 2px solid #38bdf8;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            height: 90px;
             flex-shrink: 0;
         }
 
-        /* LEFT COLUMN */
-        .radar-section { flex: 0 0 55%; } 
-        .radar-box { width: 100%; height: 100%; padding: 0; margin: 0; }
-        iframe { width: 100%; height: 100%; border: none; display: block; }
-
-        .forecast-box { flex: 1; overflow: hidden; background: #fff; }
-        #output { 
-            padding: 1vw; 
-            white-space: pre-wrap; 
-            font-family: "Courier New", Courier, monospace; 
-            font-size: 0.75rem; 
-            line-height: 1.4;
-            color: #222;
+        .site-header svg {
+            height: 100%;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.5));
         }
 
-        /* RIGHT COLUMN (CRIB DATA) */
-        .data-box { flex: 1; overflow: hidden; height: 100%; }
+        /* --- Google Slides: Full Width, Cropped Bar --- */
+        .slides-outer-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            background: #000;
+            flex-shrink: 0;
+        }
+
+        .slides-inner-crop {
+            position: relative;
+            width: 100%;
+            padding-top: 53.5%; 
+            overflow: hidden;
+        }
+
+        .slides-inner-crop iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scale(1.05); 
+            transform-origin: top center;
+            border: none;
+        }
+
+        /* --- Main Data Grid --- */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: 0.5vw;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .column { display: flex; flex-direction: column; gap: 0.5vw; }
+        
+        .dashboard-section { 
+            background: #ffffff; border-radius: 8px; overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; flex-direction: column;
+        }
+
+        /* Specifically make the Harrison-Dever section expand */
+        .crib-section {
+            flex: 1; 
+            min-height: 500px; /* Forces it to be taller */
+        }
+
+        h2 { 
+            background-color: #1e293b; color: #f8fafc; margin: 0; padding: 8px 12px; 
+            font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
+            border-bottom: 3px solid #38bdf8; height: 40px; 
+            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+
+        .radar-box { height: 850px; }
+        .forecast-box { flex: 1; min-height: 350px; }
+        
+        .snapshot-container {
+            background: #f1f5f9; display: grid; grid-template-columns: repeat(5, 1fr);
+            padding: 10px 5px; border-bottom: 2px solid #38bdf8;
+            flex-shrink: 0;
+        }
+        .snapshot-item { text-align: center; border-right: 1px solid #cbd5e1; }
+        .snapshot-item:last-child { border-right: none; }
+        .snapshot-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; }
+        .snapshot-value { font-size: 1.1rem; font-weight: 800; color: #0f172a; }
+
+        /* Adjusted wrapper to fill the taller section */
         .table-wrapper { 
             flex: 1; 
-            overflow: hidden; /* Removes scrollbars to keep "Fill" look */
+            overflow-y: auto; 
             background: #fff; 
+            max-height: 750px; /* Increased height */
         }
 
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th, td { 
-            padding: 0.65vh 2px; /* Tight padding to maximize row count */
-            text-align: center; 
-            border-bottom: 1px solid #eee; 
-            font-size: 0.85rem; 
-            white-space: nowrap;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px 4px; text-align: center; border-bottom: 1px solid #e2e8f0; font-size: 0.8rem; }
+        th { position: sticky; top: 0; background: #f8fafc; z-index: 10; font-size: 0.65rem; color: #64748b; }
         
-        th { background-color: #f8f9fa; color: #666; font-size: 0.65rem; text-transform: uppercase; }
-        .time-col { font-weight: bold; text-align: left; padding-left: 10px; width: 28%; }
-        .unit-label { font-size: 0.75em; color: #888; margin-left: 1px; }
+        .wind-cell { display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 600; }
+        .wind-arrow { width: 14px; height: 14px; fill: #006eb7; }
 
-        .wind-arrow {
-            display: inline-block;
-            font-size: 1rem;
-            margin-left: 4px; /* Space after text */
-            vertical-align: middle;
-            color: #0055aa;
-            font-weight: bold;
-        }
-
-        .loading { padding: 40px; text-align: center; color: #666; font-style: italic; }
-        .error-msg { position: absolute; top: 0; left: 0; right: 0; z-index: 100; color: #d93025; font-weight: bold; padding: 10px; text-align: center; background: #fce8e6; }
-        .footer-info { position: absolute; bottom: 15px; right: 15px; font-size: 0.7rem; color: #777; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 4px; }
+        .webcam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5vw; height: 240px; flex-shrink: 0; }
+        .webcam-card { background: #000; border-radius: 8px; position: relative; overflow: hidden; border: 1px solid #1e293b; }
+        .webcam-card img { width: 100%; height: 100%; object-fit: cover; }
+        .webcam-label { position: absolute; bottom: 0; width: 100%; background: rgba(15, 23, 42, 0.8); color: #38bdf8; font-size: 0.6rem; padding: 5px; font-weight: bold; }
+        
+        #output { padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; white-space: pre-wrap; background: #f8fafc; color: #1e293b; line-height: 1.4; }
+        .update-timestamp { font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-<div id="status-area"></div>
+<header class="site-header">
+    <svg id="CCYC_Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142.16 42.97">
+        <defs><style>.cls-1{fill:#cd163f;stroke:#cd163f;}.cls-1,.cls-2,.cls-3{stroke-miterlimit:10;stroke-width:.73px;}.cls-4,.cls-3{fill:#fff;}.cls-2{fill:#006eb7;}.cls-2,.cls-3{stroke:#006eb7;}</style></defs><g id="Corinthian"><path class="cls-4" d="M7.35,19.92c-.27-.35-.61-.62-1.02-.81-.41-.19-.84-.28-1.28-.28-.54,0-1.03.1-1.46.3-.44.2-.81.48-1.12.83s-.55.76-.72,1.23-.26.98-.26,1.52c0,.5.08.98.24,1.43s.4.85.7,1.19.68.61,1.12.81.94.3,1.5.3,1.03-.11,1.44-.34c.41-.22.76-.54,1.05-.94l1.09.82c-.07.1-.2.24-.38.42s-.42.37-.71.55c-.3.18-.65.35-1.07.49s-.9.21-1.45.21c-.76,0-1.44-.14-2.04-.43s-1.12-.67-1.55-1.13c-.43-.47-.75-1-.98-1.58-.22-.59-.34-1.18-.34-1.79,0-.74.12-1.42.36-2.04.24-.62.58-1.16,1.02-1.62.44-.45.96-.81,1.57-1.06s1.29-.38,2.02-.38c.63,0,1.25.12,1.85.36.61.24,1.1.62,1.49,1.12l-1.08.82s.01,0,.01,0Z"/><path class="cls-4" d="M14.57,27.65c-.73,0-1.4-.13-2.01-.38-.61-.26-1.14-.61-1.57-1.06-.44-.45-.78-.98-1.02-1.59-.25-.61-.37-1.27-.37-1.98s.12-1.37.37-1.98.59-1.14,1.02-1.59c.44-.45.96-.8,1.57-1.06s1.28-.38,2.01-.38,1.4.13,2.01.38c.61.26,1.13.61,1.57,1.06s.78.98,1.02,1.59c.25.61.37,1.27.37,1.98s-.12,1.37-.37,1.98-.59,1.14-1.02,1.59c-.44.45-.96.8-1.57,1.06-.61.26-1.28.38-2.01.38ZM14.57,26.43c.55,0,1.04-.1,1.48-.3.44-.2.82-.47,1.13-.82.31-.34.56-.74.73-1.21.17-.46.26-.96.26-1.48s-.09-1.01-.26-1.48c-.17-.46-.41-.87-.73-1.21-.31-.34-.69-.61-1.13-.82-.44-.2-.94-.3-1.48-.3s-1.04.1-1.48.3-.82.47-1.13.82c-.31.34-.56.74-.73,1.21-.17.46-.26.96-.26,1.48s.09,1.01.26,1.48c.17.46.41.87.73,1.21.31.34.69.61,1.13.82.44.2.94.3,1.48.3Z"/><path class="cls-4" d="M21.41,17.86h3.36c.61,0,1.11.08,1.51.25s.71.38.94.63.39.54.48.86.13.63.13.92-.05.6-.16.88c-.11.28-.26.54-.47.77-.2.23-.45.42-.74.58-.29.16-.62.25-.98.29l2.71,4.36h-1.62l-2.43-4.21h-1.44v4.21h-1.29v-9.55h0ZM22.71,22.06h1.7c.25,0,.5-.02.75-.06s.47-.11.66-.22.35-.26.47-.47c.12-.2.18-.47.18-.79s-.06-.59-.18-.79-.27-.36-.47-.47c-.19-.11-.41-.18-.66-.22s-.5-.06-.75-.06h-1.7v3.07h0Z"/><path class="cls-4" d="M29.65,17.86h1.29v9.55h-1.29s0-9.55,0-9.55Z"/><path class="cls-4" d="M33.4,17.86h1.7l5.26,7.85h.03v-7.85h1.29v9.55h-1.65l-5.31-7.85h-.03v7.85h-1.29s0-9.55,0-9.55Z"/><path class="cls-4" d="M46.13,19.07h-3.07v-1.21h7.44v1.21h-3.07v8.33h-1.29v-8.33h0Z"/><path class="cls-4" d="M51.87,17.86h1.29v3.96h4.95v-3.96h1.29v9.55h-1.29v-4.37h-4.95v4.37h-1.29v-9.55Z"/><path class="cls-4" d="M61.87,17.86h1.29v9.55h-1.29v-9.55Z"/><path class="cls-4" d="M68.61,17.86h1.17l4.09,9.55h-1.51l-.96-2.36h-4.54l-.94,2.36h-1.51l4.21-9.55h-.01,0ZM70.93,23.91l-1.78-4.38h-.03l-1.81,4.38s3.62,0,3.62,0Z"/><path class="cls-4" d="M75.11,17.86h1.7l5.26,7.85h.03v-7.85h1.29v9.55h-1.65l-5.31-7.85h-.03v7.85h-1.29v-9.55Z"/></g><path class="cls-4" d="M3.37,37.86h-.7v-3.03L.11,30.83h.87l2.04,3.32,2.04-3.32h.87l-2.56,4v3.03Z"/><path class="cls-4" d="M8.82,37.86h-.81l2.98-7.04h.68l2.98,7.04h-.81l-.76-1.85h-3.5s-.76,1.85-.76,1.85ZM9.83,35.35h2.97l-1.48-3.7-1.49,3.7Z"/><path class="cls-4" d="M24.14,36.74c-.12.18-.26.35-.43.51-.18.16-.37.3-.58.41-.22.12-.46.21-.71.27-.25.07-.53.1-.81.1-.51,0-.98-.09-1.42-.28s-.81-.44-1.13-.77-.56-.72-.75-1.17c-.18-.45-.27-.94-.27-1.48s.09-1.03.27-1.48.43-.84.75-1.17.7-.58,1.13-.77c.44-.19.9-.28,1.42-.28.43,0,.85.09,1.27.26s.79.46,1.09.85l-.61.47c-.07-.11-.17-.23-.29-.34s-.26-.21-.42-.3-.33-.16-.51-.21-.36-.08-.54-.08c-.44,0-.83.08-1.18.25s-.64.39-.88.67c-.24.28-.43.6-.55.97s-.19.75-.19,1.16.07.79.19,1.16.31.69.55.97c.24.28.53.5.88.67s.74.25,1.18.25c.18,0,.36-.02.53-.05s.35-.09.53-.17c.18-.08.33-.19.49-.32.16-.14.29-.31.42-.51l.57.42h0Z"/><path class="cls-4" d="M28.24,30.82h.7v3.05h3.73v-3.05h.7v7.04h-.7v-3.33h-3.73v3.33h-.7s0-7.04,0-7.04Z"/><path class="cls-4" d="M40.35,37.86h-.7v-6.38h-2.29v-.66h5.28v.66h-2.3v6.38h.01Z"/><path class="cls-4" d="M57.9,36.74c-.12.18-.26.35-.43.51-.18.16-.37.3-.58.41-.22.12-.46.21-.71.27-.25.07-.53.1-.81.1-.51,0-.98-.09-1.42-.28s-.81-.44-1.13-.77-.56-.72-.75-1.17c-.18-.45-.27-.94-.27-1.48s.09-1.03.27-1.48.43-.84.75-1.17.7-.58,1.13-.77c.44-.19.9-.28,1.42-.28.43,0,.85.09,1.27.26.43.17.79.46,1.09.85l-.61.47c-.07-.11-.17-.23-.29-.34-.13-.11-.26-.21-.42-.3s-.33-.16-.51-.21-.36-.08-.54-.08c-.44,0-.83.08-1.18.25s-.64.39-.88.67c-.24.28-.43.6-.55.97s-.19.75-.19,1.16.07.79.19,1.16.31.69.55.97c.24.28.53.5.88.67s.74.25,1.18.25c.18,0,.36-.02.53-.05s.35-.09.53-.17c.18-.08.33-.19.49-.32.16-.14.29-.31.42-.51l.57.42h0Z"/><path class="cls-4" d="M62.69,37.2h3.19v.66h-3.88v-7.04h.7v6.38h0Z"/><path class="cls-4" d="M74.65,35.23c0,.29-.04.6-.1.93-.07.33-.19.63-.38.91s-.45.51-.77.69-.74.27-1.25.27-.93-.09-1.25-.27-.57-.41-.76-.69-.31-.58-.38-.91c-.07-.33-.1-.64-.1-.93v-4.41h.7v4.33c0,.34.03.63.1.87s.15.45.25.61c.11.17.22.3.36.39s.26.17.4.22c.14.05.26.09.38.1.13.02.22.02.32.02.09,0,.18,0,.31-.02s.25-.05.39-.1.26-.13.4-.22c.14-.1.25-.23.36-.39.11-.17.19-.37.25-.61s.1-.53.1-.87v-4.33h.7v4.41s-.03,0-.03,0Z"/><path class="cls-4" d="M79.33,30.82h2.04c.28,0,.55.03.82.09s.5.16.71.3c.2.14.37.32.5.55s.18.5.18.83c0,.38-.11.71-.31.99-.21.27-.51.46-.89.55v.02c.49.04.87.21,1.14.52s.41.72.41,1.24c0,.11-.03.28-.08.5-.06.22-.17.44-.34.65-.18.22-.43.4-.75.56s-.77.24-1.31.24h-2.09v-7.04h-.03ZM80.02,33.9h1.4c.17,0,.33-.02.5-.06s.31-.11.45-.21.24-.23.32-.38c.09-.16.13-.35.13-.57,0-.07,0-.18-.04-.31s-.1-.26-.19-.4c-.1-.13-.24-.25-.44-.34-.19-.1-.46-.14-.78-.14h-1.33v2.42h-.02,0ZM80.02,37.2h1.33c.25,0,.49-.03.71-.08.21-.05.41-.13.57-.24s.29-.25.38-.41.14-.36.14-.6c0-.46-.15-.81-.44-1.03-.29-.23-.72-.34-1.27-.34h-1.42v2.7Z"/><g id="Chicago"><path class="cls-4" d="M7.35,7.23c-.27-.35-.61-.62-1.02-.81s-.84-.28-1.28-.28c-.54,0-1.03.1-1.46.3-.44.2-.81.48-1.12.83s-.55.76-.72,1.23-.26.98-.26,1.52c0,.5.08.98.24,1.43s.4.85.7,1.19.68.61,1.12.81c.44.2.94.3,1.5.3s1.03-.11,1.44-.34c.41-.22.76-.54,1.05-.94l1.09.82c-.07.1-.2.24-.38.42s-.42.37-.71.55c-.3.18-.65.35-1.07.49-.42.14-.9.21-1.45.21-.76,0-1.44-.14-2.04-.43s-1.12-.67-1.55-1.13c-.43-.47-.75-1-.98-1.58-.22-.59-.34-1.18-.34-1.79,0-.74.12-1.42.36-2.04.24-.62.58-1.16,1.02-1.62.44-.45.96-.81,1.57-1.06.61-.25,1.29-.38,2.02-.38.63,0,1.25.12,1.85.36.61.24,1.1.62,1.49,1.12l-1.08.82s.01,0,.01,0Z"/><path class="cls-4" d="M10.2,5.17h1.29v3.96h4.95v-3.96h1.29v9.55h-1.29v-4.37h-4.95v4.37h-1.29s0-9.55,0-9.55Z"/><path class="cls-4" d="M20.19,5.17h1.29v9.55h-1.29s0-9.55,0-9.55Z"/><path class="cls-4" d="M30.59,7.23c-.27-.35-.61-.62-1.02-.81s-.84-.28-1.28-.28c-.54,0-1.03.1-1.46.3-.44.2-.81.48-1.12.83-.31.35-.55.76-.72,1.23s-.26.98-.26,1.52c0,.5.08.98.24,1.43s.4.85.7,1.19.68.61,1.12.81.94.3,1.5.3,1.03-.11,1.44-.34c.41-.22.76-.54,1.05-.94l1.09.82c-.07.1-.2.24-.38.42-.18.18-.42.37-.71.55-.3.18-.65.35-1.07.49-.42.14-.9.21-1.45.21-.76,0-1.44-.14-2.04-.43s-1.12-.67-1.55-1.13c-.43-.47-.75-1-.98-1.58-.22-.59-.34-1.18-.34-1.79,0-.74.12-1.42.36-2.04s.58-1.16,1.02-1.62c.44-.45.96-.81,1.57-1.06s1.29-.38,2.02-.38c.63,0,1.25.12,1.85.36.61.24,1.1.62,1.49,1.12l-1.08.82s.01,0,0,0h0Z"/><path class="cls-4" d="M36.43,5.17h1.17l4.09,9.55h-1.51l-.96-2.36h-4.54l-.94,2.36h-1.51l4.21-9.55h-.01ZM38.75,11.22l-1.78-4.38h-.03l-1.81,4.38h3.62Z"/><path class="cls-4" d="M51.06,9.37v4.71c-.23.14-.5.27-.8.38s-.6.2-.92.28-.64.13-.97.17-.64.05-.92.05c-.81,0-1.53-.13-2.16-.4s-1.17-.63-1.6-1.09c-.44-.46-.77-.99-1-1.6s-.34-1.25-.34-1.92c0-.71.12-1.37.37-1.98s.59-1.14,1.02-1.59c.44-.45.96-.8,1.57-1.06.61-.26,1.28-.38,2.01-.38.88,0,1.6.11,2.16.33s1.02.52,1.4.91l-.92.98c-.4-.38-.81-.64-1.25-.79s-.9-.22-1.39-.22c-.55,0-1.04.1-1.48.3s-.82.47-1.13.82c-.31.34-.56.74-.73,1.21-.17.46-.26.96-.26,1.48s.09,1.04.28,1.5.45.87.78,1.21c.33.34.72.61,1.17.8.45.19.94.29,1.47.29.46,0,.89-.04,1.3-.13s.76-.21,1.05-.37v-2.66h-2.12v-1.21h3.41s0-.02,0-.02Z"/><path class="cls-4" d="M57.8,14.96c-.73,0-1.4-.13-2.01-.38-.61-.26-1.14-.61-1.57-1.06-.44-.45-.78-.98-1.02-1.59-.25-.61-.37-1.27-.37-1.98s.12-1.37.37-1.98.59-1.14,1.02-1.59c.44-.45.96-.8,1.57-1.06.61-.26,1.28-.38,2.01-.38s1.4.13,2.01.38c.61.26,1.13.61,1.57,1.06s.78.98,1.02,1.59c.25.61.37,1.27.37,1.98s-.12,1.37-.37,1.98-.59,1.14-1.02,1.59c-.44.45-.96.8-1.57,1.06-.61.26-1.28.38-2.01.38ZM57.8,13.74c.55,0,1.04-.1,1.48-.3s.82-.47,1.13-.82c.31-.34.56-.74.73-1.21.17-.46.26-.96.26-1.48s-.09-1.01-.26-1.48c-.17-.46-.41-.87-.73-1.21-.31-.34-.69-.61-1.13-.82-.44-.2-.94-.3-1.48-.3s-1.04.1-1.48.3-.82.47-1.13.82c-.31.34-.56.74-.73,1.21-.17.46-.26.96-.26,1.48s.09,1.01.26,1.48c.17.46.41.87.73,1.21.31.34.69.61,1.13.82.44.2.94.3,1.48.3Z"/></g><path class="cls-4" d="M85.68,31.86c0-.19.04-.36.11-.53.07-.16.17-.3.28-.42s.25-.21.41-.28.32-.1.5-.1.34.03.5.1.29.16.41.28.21.26.28.42.11.33.11.52-.04.36-.11.53c-.07.16-.17.3-.28.42s-.25.21-.41.28-.32.1-.5.1-.34-.03-.5-.1-.29-.16-.41-.28-.21-.26-.28-.42-.11-.33-.11-.52ZM85.89,31.86c0,.16.03.31.09.44.06.14.14.25.23.35s.21.18.34.24.27.09.43.09.29-.03.43-.09c.13-.06.24-.14.34-.24s.18-.22.23-.36.09-.29.09-.45-.03-.31-.09-.44-.14-.26-.23-.36c-.1-.1-.21-.18-.34-.24s-.27-.08-.43-.08-.29.03-.43.09c-.13.06-.24.14-.34.24s-.18.22-.23.36c-.06.14-.09.29-.09.45ZM86.5,31.09h.54c.18,0,.31.04.4.1.09.07.13.18.13.34,0,.14-.04.24-.12.3s-.17.1-.28.11l.43.67h-.22l-.41-.66h-.26v.66h-.2v-1.53h0ZM86.7,31.77h.4s.09,0,.13-.03c.04-.02.07-.04.09-.07.02-.03.03-.08.03-.14,0-.05,0-.09-.03-.13-.02-.03-.05-.06-.08-.07-.03-.02-.07-.03-.11-.03h-.44v.49-.02h.01Z"/><polygon class="cls-3" points="92.56 5.53 140.47 21.61 92.56 37.69 92.56 5.53"/><rect class="cls-2" x="92.56" y="18.54" width="21.9" height="5.89"/><polygon class="cls-2" points="111.44 18.35 116.93 13.71 123.24 16.05 115.2 22.87 111.44 18.35"/><polygon class="cls-2" points="115.11 19.98 123.45 27.04 117.14 29.22 111.35 24.49 115.11 19.98"/><polygon class="cls-1" points="101.97 11.77 102.38 13.02 103.69 13.02 102.63 13.71 103.03 14.92 101.97 14.11 100.91 14.88 101.31 13.71 100.25 13.02 101.57 13.02 101.97 11.77"/><polygon class="cls-1" points="101.97 28.33 102.38 29.59 103.69 29.59 102.63 30.27 103.03 31.49 101.97 30.68 100.91 31.44 101.31 30.27 100.25 29.59 101.57 29.59 101.97 28.33"/></svg>
+</header>
+
+<div class="slides-outer-container">
+    <div class="slides-inner-crop">
+        <iframe id="ccyc-slides" src="https://docs.google.com/presentation/d/e/2PACX-1vSNWetqF1dz3qxMq8GQ6egKMQKruabCQXc1_UdDkW1HU17rwjWyuXGHsITJYDQ5Hbd6Q4mG5AbU-_zZ/pubembed?start=true&loop=true&delayms=10000" allowfullscreen="true"></iframe>
+    </div>
+</div>
 
 <div class="main-grid">
     <div class="column">
-        <div class="dashboard-section radar-section">
-            <h2>Local Radar - Chicago</h2>
-            <div class="radar-box">
-                <iframe src="https://embed.ventusky.com/?p=41.941;-87.641;10&l=radar" loading="lazy"></iframe>
-            </div>
+        <div class="dashboard-section radar-box">
+            <h2>Live Radar</h2>
+            <iframe src="https://embed.ventusky.com/?p=41.941;-87.641;10&l=radar" style="width:100%; height:100%; border:none;"></iframe>
         </div>
-
         <div class="dashboard-section forecast-box">
-            <h2>LMZ741 Nearshore Forecast</h2>
-            <div id="output" class="loading">Loading Forecast...</div>
+            <h2>Nearshore Forecast</h2>
+            <div id="output">Loading...</div>
         </div>
     </div>
 
     <div class="column">
-        <div class="dashboard-section data-box">
-            <h2>Harrison-Dever Crib (CHII2)</h2>
+        <div class="dashboard-section crib-section">
+            <h2>
+                <span>Harrison-Dever Crib (CHII2)</span>
+                <span id="header-update-time" class="update-timestamp">Connecting...</span>
+            </h2>
+            <div class="snapshot-container">
+                <div class="snapshot-item"><span class="snapshot-label">Time</span><div class="snapshot-value" id="snap-time">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Wind</span><div class="snapshot-value" id="snap-wind">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Gust</span><div class="snapshot-value" id="snap-gust">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Dir</span><div class="snapshot-value" id="snap-dir">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Temp</span><div class="snapshot-value" id="snap-temp">--</div></div>
+            </div>
             <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="time-col">Time</th>
-                            <th>Dir</th>
-                            <th>Wind</th>
-                            <th>Gust</th>
-                            <th>Wave</th>
-                            <th>Air</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <tr><td colspan="6" class="loading">Loading Observations...</td></tr>
-                    </tbody>
+                <table id="obs-table">
+                    <thead><tr><th>Time</th><th>Wind</th><th>Gust</th><th>Dir</th><th>Air</th><th>Dew</th></tr></thead>
+                    <tbody id="table-body"></tbody>
                 </table>
             </div>
+        </div>
+        <div class="webcam-grid">
+            <div class="webcam-card"><img id="webcam-01" src=""><div class="webcam-label">Harrison-Dever Intake</div></div>
+            <div class="webcam-card"><img id="webcam-03" src=""><div class="webcam-label">Chicago Lakeward</div></div>
         </div>
     </div>
 </div>
 
-<div id="refresh-time" class="footer-info"></div>
-
 <script>
-    const STATION_URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.ndbc.noaa.gov/data/realtime2/CHII2.txt');
-    const FORECAST_URL = "https://corsproxy.io/?" + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt");
+    const PROXY = "https://corsproxy.io/?";
+    const GLERL_BASE = "https://www.glerl.noaa.gov/metdata/chi/";
+    const GLERL_TEXT_URL = "https://www.glerl.noaa.gov/metdata/plot_3hr.php?site=chi&units=e";
+    const SLIDES_URL_BASE = "https://docs.google.com/presentation/d/e/2PACX-1vSNWetqF1dz3qxMq8GQ6egKMQKruabCQXc1_UdDkW1HU17rwjWyuXGHsITJYDQ5Hbd6Q4mG5AbU-_zZ/pubembed?start=true&loop=true&delayms=10000";
 
-    function getCardinal(deg) {
-        if (deg === 'MM' || isNaN(deg)) return '--';
-        const val = Math.floor((deg / 22.5) + 0.5);
+    function getCompassDirection(deg) {
+        if (isNaN(deg) || deg === -99) return '--';
         const arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
-        return arr[(val % 16)];
+        return arr[Math.floor((deg / 22.5) + 0.5) % 16];
     }
 
-    async function updateDashboard() {
+    function getWindArrow(deg) {
+        return `<svg class="wind-arrow" style="transform: rotate(${deg + 180}deg);" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" /></svg>`;
+    }
+
+    async function updateObservations() {
+        const ts = new Date().getTime();
         try {
-            const stationRes = await fetch(STATION_URL);
-            const stationJson = await stationRes.json();
-            const lines = stationJson.contents.split('\n');
-            const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '';
-            
-            // Pull 60 rows to ensure we fill the height of any reasonable screen
-            lines.slice(2, 62).forEach(line => {
-                const c = line.trim().split(/\s+/);
-                if (c.length < 15) return;
+            const res = await fetch(PROXY + encodeURIComponent(GLERL_BASE + "?t=" + ts));
+            const text = await res.text();
+            const body = new DOMParser().parseFromString(text, "text/html").body.innerText;
+            const match = (label) => { 
+                const m = body.match(new RegExp(label + ":\\s*([\\d.-]+)", "i"));
+                return m ? m[1] : null;
+            };
+            const w = match("Wind Speed"), g = match("Max Wind Speed"), d = match("Wind Direction"), t = match("Air Temperature");
+            const time = body.match(/(\d{1,2}:\d{2}\s?[APM]{2})/i);
+            if (w) {
+                document.getElementById('snap-time').textContent = time ? time[0] : "--";
+                document.getElementById('snap-wind').textContent = w + "kt";
+                document.getElementById('snap-gust').textContent = g + "kt";
+                document.getElementById('snap-dir').textContent = getCompassDirection(parseFloat(d));
+                document.getElementById('snap-temp').textContent = Math.round(t) + "°F";
+            }
+        } catch (e) { console.error(e); }
 
-                const utcDate = new Date(Date.UTC(c[0], c[1]-1, c[2], c[3], c[4]));
-                const chicagoTime = utcDate.toLocaleString("en-US", {
-                    timeZone: "America/Chicago", hour: 'numeric', minute: '2-digit', hour12: true
+        try {
+            const res = await fetch(PROXY + encodeURIComponent(GLERL_TEXT_URL + "&t=" + ts));
+            const html = await res.text();
+            const start = html.indexOf("YYYY-MM-DD");
+            if (start !== -1) {
+                const lines = html.substring(start).split('\n').filter(l => l.trim().length > 0).slice(2);
+                let rows = "";
+                lines.forEach(line => {
+                    const p = line.trim().split(/\s+/);
+                    if (p.length >= 7) {
+                        const timeStr = p[1];
+                        if (timeStr && timeStr.endsWith('0')) {
+                            const deg = parseFloat(p[4]);
+                            rows += `<tr>
+                                <td>${timeStr}</td>
+                                <td><b>${p[2]}</b></td>
+                                <td>${p[3]}</td>
+                                <td><div class="wind-cell"><span>${getCompassDirection(deg)}</span>${getWindArrow(deg)}</div></td>
+                                <td>${Math.round(p[5])}°F</td>
+                                <td>${Math.round(p[6])}°F</td>
+                            </tr>`;
+                        }
+                    }
                 });
+                document.getElementById('table-body').innerHTML = rows;
+                document.getElementById('header-update-time').textContent = "Obs Updated: " + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            }
+        } catch (e) { console.error(e); }
 
-                const deg = parseFloat(c[5]);
-                const cardinal = getCardinal(deg);
-                // Arrow follows wind direction (points where wind is going)
-                const arrowRotation = isNaN(deg) ? 0 : deg + 180;
-
-                const windKts = c[6] === 'MM' ? '--' : (parseFloat(c[6]) * 1.9438).toFixed(1);
-                const gustKts = c[7] === 'MM' ? '--' : (parseFloat(c[7]) * 1.9438).toFixed(1);
-                const waveFt = c[8] === 'MM' ? '--' : (parseFloat(c[8]) * 3.28084).toFixed(1);
-                const airF = c[13] === 'MM' ? '--' : (parseFloat(c[13]) * 1.8 + 32).toFixed(1);
-
-                tableBody.innerHTML += `
-                    <tr>
-                        <td class="time-col">${chicagoTime}</td>
-                        <td style="text-align: center;">
-                            ${cardinal}<span class="wind-arrow" style="transform: rotate(${arrowRotation}deg);">↑</span>
-                        </td>
-                        <td>${windKts}<span class="unit-label">kts</span></td>
-                        <td>${gustKts}<span class="unit-label">kts</span></td>
-                        <td>${waveFt}<span class="unit-label">ft</span></td>
-                        <td>${airF}°<span class="unit-label">F</span></td>
-                    </tr>`;
-            });
-
-            const forecastRes = await fetch(FORECAST_URL);
-            const forecastText = await forecastRes.text();
-            const output = document.getElementById('output');
-            const startMarker = "Wilmette Harbor";
-            const index = forecastText.indexOf(startMarker);
-            let finalForecast = (index !== -1) ? forecastText.substring(index) : forecastText;
-            finalForecast = finalForecast.replace(/\n\./g, "\n");
-            output.textContent = finalForecast.trim();
-            output.classList.remove('loading');
-
-            document.getElementById('status-area').innerHTML = '';
-            document.getElementById('refresh-time').textContent = "Updated: " + new Date().toLocaleTimeString();
-
-        } catch (err) {
-            document.getElementById('status-area').innerHTML = `<div class="error-msg">⚠️ Update Error. Retrying...</div>`;
-            setTimeout(() => location.reload(), 30000);
-        }
+        document.getElementById('webcam-01').src = GLERL_BASE + "chi01.jpg?t=" + ts;
+        document.getElementById('webcam-03').src = GLERL_BASE + "chi03.jpg?t=" + ts;
     }
 
-    updateDashboard();
-    setInterval(updateDashboard, 600000);
-</script>
+    async function updateForecast() {
+        const ts = new Date().getTime();
+        try {
+            const res = await fetch(PROXY + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt?t=" + ts));
+            const txt = await res.text();
+            const marker = "Wilmette Harbor";
+            document.getElementById('output').textContent = (txt.indexOf(marker) !== -1 ? txt.substring(txt.indexOf(marker)) : txt).trim();
+        } catch (e) { console.error(e); }
+    }
 
+    function updateSlides() {
+        const ts = new Date().getTime();
+        document.getElementById('ccyc-slides').src = SLIDES_URL_BASE + "&t=" + ts;
+    }
+
+    updateObservations();
+    updateForecast();
+    updateSlides();
+
+    setInterval(updateObservations, 5 * 60 * 1000); 
+    setInterval(updateForecast, 10 * 60 * 1000);   
+    setInterval(updateSlides, 60 * 60 * 1000);     
+</script>
 </body>
 </html>
