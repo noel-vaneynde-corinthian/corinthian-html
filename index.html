@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
     <title>Chicago Marine Dashboard - CCYC</title>
     <style>
         * { box-sizing: border-box; }
@@ -24,7 +25,7 @@
             border-radius: 8px;
             border-bottom: 2px solid #38bdf8;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            height: 90px;
+            height: 120px;
             flex-shrink: 0;
         }
 
@@ -92,8 +93,8 @@
             display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
         }
 
-        .radar-box { height: 850px; }
-        .forecast-box { flex: 1; min-height: 350px; }
+        .radar-box { height: 600px; }
+        .forecast-box { flex: 1; min-height: 600px; }
         
         .snapshot-container {
             background: #f1f5f9; display: grid; grid-template-columns: repeat(5, 1fr);
@@ -137,16 +138,14 @@
 </header>
 
 <div class="slides-outer-container">
-    <div class="slides-inner-crop">
-        <iframe id="ccyc-slides" src="https://docs.google.com/presentation/d/e/2PACX-1vSNWetqF1dz3qxMq8GQ6egKMQKruabCQXc1_UdDkW1HU17rwjWyuXGHsITJYDQ5Hbd6Q4mG5AbU-_zZ/pubembed?start=true&loop=true&delayms=10000" allowfullscreen="true"></iframe>
-    </div>
+    <div class="commonninja_component pid-e3470a11-d094-40bb-aaf9-64985651da39"></div>
 </div>
 
 <div class="main-grid">
     <div class="column">
         <div class="dashboard-section radar-box">
             <h2>Live Radar</h2>
-            <iframe src="https://embed.ventusky.com/?p=41.941;-87.641;10&l=radar" style="width:100%; height:100%; border:none;"></iframe>
+            <iframe src="https://embed.ventusky.com/?p=41.953;-87.648;10&l=radar" style="width:100%; height:100%; border:none;"></iframe>
         </div>
         <div class="dashboard-section forecast-box">
             <h2>Nearshore Forecast</h2>
@@ -261,18 +260,11 @@
         } catch (e) { console.error(e); }
     }
 
-    function updateSlides() {
-        const ts = new Date().getTime();
-        document.getElementById('ccyc-slides').src = SLIDES_URL_BASE + "&t=" + ts;
-    }
-
     updateObservations();
     updateForecast();
-    updateSlides();
 
     setInterval(updateObservations, 5 * 60 * 1000); 
     setInterval(updateForecast, 10 * 60 * 1000);   
-    setInterval(updateSlides, 60 * 60 * 1000);     
 </script>
 </body>
 </html>
