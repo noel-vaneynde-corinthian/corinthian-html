@@ -181,7 +181,8 @@
 </div>
 
 <script>
-    const PROXY = "https://corsproxy.io/?";
+    // Replace with your actual Cloudflare Worker URL
+    const PROXY = "https://shy-frog-ecd2.noel-vaneynde.workers.dev/?url=";
     const GLERL_BASE = "https://www.glerl.noaa.gov/metdata/chi/";
     const GLERL_TEXT_URL = "https://www.glerl.noaa.gov/metdata/plot_3hr.php?site=chi&units=e";
     const SLIDES_URL_BASE = "https://docs.google.com/presentation/d/e/2PACX-1vSNWetqF1dz3qxMq8GQ6egKMQKruabCQXc1_UdDkW1HU17rwjWyuXGHsITJYDQ5Hbd6Q4mG5AbU-_zZ/pubembed?start=true&loop=true&delayms=10000";
@@ -251,14 +252,27 @@
     }
 
     async function updateForecast() {
-        const ts = new Date().getTime();
-        try {
-            const res = await fetch(PROXY + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt?t=" + ts));
-            const txt = await res.text();
-            const marker = "Wilmette Harbor";
-            document.getElementById('output').textContent = (txt.indexOf(marker) !== -1 ? txt.substring(txt.indexOf(marker)) : txt).trim();
-        } catch (e) { console.error(e); }
+    const ts = new Date().getTime();
+    try {
+        const res = await fetch(PROXY + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt?t=" + ts));
+        let txt = await res.text();
+        
+        // 1. Find the starting marker
+        const marker = "Wilmette Harbor";
+        if (txt.indexOf(marker) !== -1) {
+            txt = txt.substring(txt.indexOf(marker));
+        }
+
+        // 2. Remove everything after the $$ delimiter
+        if (txt.indexOf("$$") !== -1) {
+            txt = txt.split("$$")[0];
+        }
+
+        document.getElementById('output').textContent = txt.trim();
+    } catch (e) { 
+        console.error("Forecast update error:", e); 
     }
+}
 
     updateObservations();
     updateForecast();
