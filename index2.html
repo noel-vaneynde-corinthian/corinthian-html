@@ -114,14 +114,31 @@
             max-height: 750px; /* Increased height */
         }
 
-        table { width: 100%; border-collapse: collapse; }
+        
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
         th, td { padding: 8px 4px; text-align: center; border-bottom: 1px solid #e2e8f0; font-size: 0.8rem; }
         th { position: sticky; top: 0; background: #f8fafc; z-index: 10; font-size: 0.65rem; color: #64748b; }
         
         .col-narrow { width: 20%; }
 
         .wind-cell { display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 600; }
-        .wind-arrow { width: 14px; height: 14px; fill: #006eb7; }
+
+        .wind-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #006eb7;
+            font-size: 0.95rem;
+            line-height: 1;
+            transform-origin: center;
+        }
+
 
         .webcam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5vw; height: 240px; flex-shrink: 0; }
         .webcam-card { background: #000; border-radius: 8px; position: relative; overflow: hidden; border: 1px solid #1e293b; }
@@ -132,18 +149,21 @@
         .update-timestamp { font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 3px; }
 
         /* Flip Card Styles */
-        .flip-card { background-color: transparent; perspective: 1000px; flex: 1; min-height: 500px; }
+        .flip-card { background-color: transparent; perspective: 1400px; transform: translateZ(0); flex: 1; min-height: 500px; }
         .flip-card-inner {
             position: relative; width: 100%; height: 100%; text-align: left;
-            transition: transform 0.8s; transform-style: preserve-3d;
+            transition: transform 0.8s; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(.22,.61,.36,1);
+            backface-visibility: hidden;
+
         }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
         .flip-card-front, .flip-card-back {
-            position: absolute; width: 100%; height: 100%;
-            -webkit-backface-visibility: hidden; backface-visibility: hidden;
-            display: flex; flex-direction: column;
+            position: absolute; inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(1px);
         }
-        .flip-card-back { transform: rotateY(180deg); }
+        .flip-card-back { transform: rotateY(180deg) translateZ(1px);}
         .crib-section { height: 100%; margin: 0; }
     </style>
 </head>
@@ -230,6 +250,32 @@
     const GLERL_BASE = "https://www.glerl.noaa.gov/metdata/chi/";
     const GLERL_TEXT_URL = "https://www.glerl.noaa.gov/metdata/plot_3hr.php?site=chi&units=e";
     const SLIDES_URL_BASE = "https://docs.google.com/presentation/d/e/2PACX-1vSNWetqF1dz3qxMq8GQ6egKMQKruabCQXc1_UdDkW1HU17rwjWyuXGHsITJYDQ5Hbd6Q4mG5AbU-_zZ/pubembed?start=true&loop=true&delayms=10000";
+const els = {
+    snapTime: document.getElementById('snap-time'),
+    snapWind: document.getElementById('snap-wind'),
+    snapGust: document.getElementById('snap-gust'),
+    snapDir: document.getElementById('snap-dir'),
+    snapTemp: document.getElementById('snap-temp'),
+
+    buoyTime: document.getElementById('buoy-time'),
+    buoyWind: document.getElementById('buoy-wind'),
+    buoyGust: document.getElementById('buoy-gust'),
+    buoyDir: document.getElementById('buoy-dir'),
+    buoyWave: document.getElementById('buoy-wave'),
+
+    cribTable: document.getElementById('table-body'),
+    buoyTable: document.getElementById('buoy-table-body'),
+
+    headerTime: document.getElementById('header-update-time'),
+    buoyHeaderTime: document.getElementById('buoy-update-time'),
+
+    webcam01: document.getElementById('webcam-01'),
+    webcam03: document.getElementById('webcam-03'),
+
+    forecastOutput: document.getElementById('output'),
+
+    flipCard: document.getElementById('crib-flip-card')
+};
 
     function getCompassDirection(deg) {
         if (isNaN(deg) || deg === -99 || deg === null) return '--';
@@ -237,9 +283,18 @@
         return arr[Math.floor((deg / 22.5) + 0.5) % 16];
     }
 
-    function getWindArrow(deg) {
-        return `<svg class="wind-arrow" style="transform: rotate(${deg + 180}deg);" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" /></svg>`;
-    }
+
+function getWindArrow(deg) {
+    if (isNaN(deg)) return "";
+
+    const rotation = deg + 90;
+    return `
+        <span
+            class="wind-arrow"
+            style="transform:rotate(${rotation}deg)">&#10148;</span>
+    `;
+
+}
 
     async function updateObservations() {
         const ts = new Date().getTime();
@@ -291,8 +346,25 @@
             }
         } catch (e) { console.error(e); }
 
-        document.getElementById('webcam-01').src = GLERL_BASE + "chi01.jpg?t=" + ts;
-        document.getElementById('webcam-03').src = GLERL_BASE + "chi03.jpg?t=" + ts;
+        function refreshImage(img, url) {
+    const preload = new Image();
+
+    preload.onload = () => {
+        img.src = preload.src;
+    };
+
+    preload.src = url;
+}
+
+refreshImage(
+    els.webcam01,
+    GLERL_BASE + "chi01.jpg?t=" + ts
+);
+
+refreshImage(
+    els.webcam03,
+    GLERL_BASE + "chi03.jpg?t=" + ts
+);
     }
 
     async function updateBuoyData() {
