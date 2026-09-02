@@ -123,8 +123,8 @@
 
         .webcam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5vw; height: 240px; flex-shrink: 0; }
         .webcam-card { background: #000; border-radius: 8px; position: relative; overflow: hidden; border: 1px solid #1e293b; }
-        .webcam-card img { width: 100%; height: 100%; object-fit: cover; }
-        .webcam-label { position: absolute; bottom: 0; width: 100%; background: rgba(15, 23, 42, 0.8); color: #38bdf8; font-size: 0.6rem; padding: 5px; font-weight: bold; }
+        .webcam-card img, .webcam-card iframe { width: 100%; height: 100%; object-fit: cover; border: none; }
+        .webcam-label { position: absolute; bottom: 0; width: 100%; background: rgba(15, 23, 42, 0.8); color: #38bdf8; font-size: 0.6rem; padding: 5px; font-weight: bold; pointer-events: none; z-index: 10; }
         
         #output { padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; white-space: pre-wrap; background: #ffffff; color: #1e293b; line-height: 1.4; }
         .update-timestamp { font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 3px; }
@@ -174,8 +174,14 @@
             </div>
         </div>
         <div class="webcam-grid">
-            <div class="webcam-card"><img id="webcam-01" src=""><div class="webcam-label">Harrison-Dever Intake</div></div>
-            <div class="webcam-card"><img id="webcam-03" src=""><div class="webcam-label">Chicago Lakeward</div></div>
+            <div class="webcam-card">
+                <iframe id="webcam-earthcam" src="https://share3.earthcam.net/tJ90CoLmq7TzrY396Yd88PwyH9l6GrNOVNfSwRWd7p4.tJ90CoLmq7TzrY396Yd88P228p1wQ2TbAUP3ZSDm6g4.tJ90CoLmq7TzrY396Yd88M5ycp0LPhR9wixvhS1vGsg/skydeck_cam_1/skydeck_cam_-_north_view/live"></iframe>
+                <div class="webcam-label">Skydeck North View</div>
+            </div>
+            <div class="webcam-card">
+                <img id="webcam-03" src="">
+                <div class="webcam-label">Chicago Lakeward</div>
+            </div>
         </div>
     </div>
 </div>
@@ -198,7 +204,6 @@
 
     async function updateObservations() {
         const ts = new Date().getTime();
-        document.getElementById('webcam-01').src = GLERL_BASE + "chi01.jpg?t=" + ts;
         document.getElementById('webcam-03').src = GLERL_BASE + "chi03.jpg?t=" + ts;
     }
 
@@ -290,7 +295,7 @@
                 const isForecastLabel = /^\.[A-Z\s]+\.\.\./.test(line);
 
                 if (isTimestamp) inForecastBody = true;
-
+    
                 if (!inForecastBody) {
                     result += line + "\n";
                 } else if (isTimestamp || isAdvisory) {
