@@ -175,12 +175,12 @@
         </div>
         <div class="webcam-grid">
             <div class="webcam-card">
-                <iframe id="webcam-earthcam" src="https://share3.earthcam.net/tJ90CoLmq7TzrY396Yd88PwyH9l6GrNOVNfSwRWd7p4.tJ90CoLmq7TzrY396Yd88P228p1wQ2TbAUP3ZSDm6g4.tJ90CoLmq7TzrY396Yd88M5ycp0LPhR9wixvhS1vGsg/skydeck_cam_1/skydeck_cam_-_north_view/live"></iframe>
+                <iframe id="webcam-earthcam-north" src="https://share3.earthcam.net/tJ90CoLmq7TzrY396Yd88PwyH9l6GrNOVNfSwRWd7p4.tJ90CoLmq7TzrY396Yd88P228p1wQ2TbAUP3ZSDm6g4.tJ90CoLmq7TzrY396Yd88M5ycp0LPhR9wixvhS1vGsg/skydeck_cam_1/skydeck_cam_-_north_view/live"></iframe>
                 <div class="webcam-label">Skydeck North View</div>
             </div>
             <div class="webcam-card">
-                <img id="webcam-03" src="">
-                <div class="webcam-label">Chicago Lakeward</div>
+                <iframe id="webcam-earthcam-east" src="https://share3.earthcam.net/tJ90CoLmq7TzrY396Yd88PwyH9l6GrNOVNfSwRWd7p4!.tJ90CoLmq7TzrY396Yd88P228p1wQ2TbAUP3ZSDm6g4!.tJ90CoLmq7TzrY396Yd88HKq8s-GWb613e6te8Eih_M!/skydeck_cam_1/skydeck_cam_-_east_view/live"></iframe>
+                <div class="webcam-label">Skydeck East View</div>
             </div>
         </div>
     </div>
@@ -189,8 +189,6 @@
 <script>
     // Replace with your actual Cloudflare Worker URL
     const PROXY = "https://shy-frog-ecd2.noel-vaneynde.workers.dev/?url=";
-    const GLERL_BASE = "https://www.glerl.noaa.gov/metdata/chi/";
-    const GLERL_TEXT_URL = "https://www.glerl.noaa.gov/metdata/plot_3hr.php?site=chi&units=e";
 
     function getCompassDirection(deg) {
         if (isNaN(deg) || deg === -99 || deg === null) return '--';
@@ -200,11 +198,6 @@
 
     function getWindArrow(deg) {
         return `<svg class="wind-arrow" style="transform: rotate(${deg + 180}deg);" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" /></svg>`;
-    }
-
-    async function updateObservations() {
-        const ts = new Date().getTime();
-        document.getElementById('webcam-03').src = GLERL_BASE + "chi03.jpg?t=" + ts;
     }
 
     async function updateBuoyData() {
@@ -295,7 +288,7 @@
                 const isForecastLabel = /^\.[A-Z\s]+\.\.\./.test(line);
 
                 if (isTimestamp) inForecastBody = true;
-    
+
                 if (!inForecastBody) {
                     result += line + "\n";
                 } else if (isTimestamp || isAdvisory) {
@@ -319,11 +312,9 @@
         }
     }
 
-    updateObservations();
     updateForecast();
     updateBuoyData();
 
-    setInterval(updateObservations, 5 * 60 * 1000); 
     setInterval(updateForecast, 10 * 60 * 1000);
     setInterval(updateBuoyData, 8 * 60 * 1000);
 </script>
