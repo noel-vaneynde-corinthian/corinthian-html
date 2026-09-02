@@ -80,10 +80,9 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; flex-direction: column;
         }
 
-        /* Specifically make the Harrison-Dever section expand */
         .crib-section {
             flex: 1; 
-            min-height: 500px; /* Forces it to be taller */
+            min-height: 500px;
         }
 
         h2 { 
@@ -106,12 +105,11 @@
         .snapshot-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; }
         .snapshot-value { font-size: 1.1rem; font-weight: 800; color: #0f172a; }
 
-        /* Adjusted wrapper to fill the taller section */
         .table-wrapper { 
             flex: 1; 
             overflow-y: auto; 
             background: #fff; 
-            max-height: 750px; /* Increased height */
+            max-height: 750px;
         }
 
         table { width: 100%; border-collapse: collapse; }
@@ -130,21 +128,6 @@
         
         #output { padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; white-space: pre-wrap; background: #ffffff; color: #1e293b; line-height: 1.4; }
         .update-timestamp { font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 3px; }
-
-        /* Flip Card Styles */
-        .flip-card { background-color: transparent; perspective: 1000px; flex: 1; min-height: 500px; }
-        .flip-card-inner {
-            position: relative; width: 100%; height: 100%; text-align: left;
-            transition: transform 0.8s; transform-style: preserve-3d;
-        }
-        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back {
-            position: absolute; width: 100%; height: 100%;
-            -webkit-backface-visibility: hidden; backface-visibility: hidden;
-            display: flex; flex-direction: column;
-        }
-        .flip-card-back { transform: rotateY(180deg); }
-        .crib-section { height: 100%; margin: 0; }
     </style>
 </head>
 <body>
@@ -171,50 +154,23 @@
     </div>
 
     <div class="column">
-        <div class="flip-card" id="crib-flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <div class="dashboard-section crib-section">
-                        <h2>
-                            <span>Harrison-Dever Crib (CHII2)</span>
-                            <span id="header-update-time" class="update-timestamp">Connecting...</span>
-                        </h2>
-                        <div class="snapshot-container">
-                            <div class="snapshot-item"><span class="snapshot-label">Time</span><div class="snapshot-value" id="snap-time">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Wind</span><div class="snapshot-value" id="snap-wind">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Gust</span><div class="snapshot-value" id="snap-gust">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Dir</span><div class="snapshot-value" id="snap-dir">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Temp</span><div class="snapshot-value" id="snap-temp">--</div></div>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="obs-table">
-                                <thead><tr><th>Time</th><th>Wind</th><th>Gust</th><th>Dir</th><th>Air</th><th>Dew</th></tr></thead>
-                                <tbody id="table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="flip-card-back">
-                    <div class="dashboard-section crib-section">
-                        <h2>
-                            <span>Chicago Buoy (Station 45198)</span>
-                            <span id="buoy-update-time" class="update-timestamp">Connecting...</span>
-                        </h2>
-                        <div class="snapshot-container">
-                            <div class="snapshot-item"><span class="snapshot-label">Time</span><div class="snapshot-value" id="buoy-time">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Wind</span><div class="snapshot-value" id="buoy-wind">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Gust</span><div class="snapshot-value" id="buoy-gust">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Dir</span><div class="snapshot-value" id="buoy-dir">--</div></div>
-                            <div class="snapshot-item"><span class="snapshot-label">Wave Ht</span><div class="snapshot-value" id="buoy-wave">--</div></div>
-                        </div>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead><tr><th>Time</th><th>Wind</th><th>Gust</th><th>Dir</th><th>Wave Ht</th><th>Period</th></tr></thead>
-                                <tbody id="buoy-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+        <div class="dashboard-section crib-section">
+            <h2>
+                <span>Chicago Buoy (Station 45198)</span>
+                <span id="buoy-update-time" class="update-timestamp">Connecting...</span>
+            </h2>
+            <div class="snapshot-container">
+                <div class="snapshot-item"><span class="snapshot-label">Time</span><div class="snapshot-value" id="buoy-time">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Wind</span><div class="snapshot-value" id="buoy-wind">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Gust</span><div class="snapshot-value" id="buoy-gust">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Dir</span><div class="snapshot-value" id="buoy-dir">--</div></div>
+                <div class="snapshot-item"><span class="snapshot-label">Wave Ht</span><div class="snapshot-value" id="buoy-wave">--</div></div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Time</th><th>Wind</th><th>Gust</th><th>Dir</th><th>Wave Ht</th><th>Period</th></tr></thead>
+                    <tbody id="buoy-table-body"></tbody>
+                </table>
             </div>
         </div>
         <div class="webcam-grid">
@@ -229,7 +185,6 @@
     const PROXY = "https://shy-frog-ecd2.noel-vaneynde.workers.dev/?url=";
     const GLERL_BASE = "https://www.glerl.noaa.gov/metdata/chi/";
     const GLERL_TEXT_URL = "https://www.glerl.noaa.gov/metdata/plot_3hr.php?site=chi&units=e";
-    const SLIDES_URL_BASE = "https://docs.google.com/presentation/d/e/2PACX-1vSNWetqF1dz3qxMq8GQ6egKMQKruabCQXc1_UdDkW1HU17rwjWyuXGHsITJYDQ5Hbd6Q4mG5AbU-_zZ/pubembed?start=true&loop=true&delayms=10000";
 
     function getCompassDirection(deg) {
         if (isNaN(deg) || deg === -99 || deg === null) return '--';
@@ -243,54 +198,6 @@
 
     async function updateObservations() {
         const ts = new Date().getTime();
-        try {
-            const res = await fetch(PROXY + encodeURIComponent(GLERL_BASE + "?t=" + ts));
-            const text = await res.text();
-            const body = new DOMParser().parseFromString(text, "text/html").body.innerText;
-            const match = (label) => { 
-                const m = body.match(new RegExp(label + ":\\s*([\\d.-]+)", "i"));
-                return m ? m[1] : null;
-            };
-            const w = match("Wind Speed"), g = match("Max Wind Speed"), d = match("Wind Direction"), t = match("Air Temperature");
-            const time = body.match(/(\d{1,2}:\d{2}\s?[APM]{2})/i);
-            if (w) {
-                document.getElementById('snap-time').textContent = time ? time[0] : "--";
-                document.getElementById('snap-wind').textContent = w + "kt";
-                document.getElementById('snap-gust').textContent = g + "kt";
-                document.getElementById('snap-dir').textContent = getCompassDirection(parseFloat(d));
-                document.getElementById('snap-temp').textContent = Math.round(t) + "°F";
-            }
-        } catch (e) { console.error(e); }
-
-        try {
-            const res = await fetch(PROXY + encodeURIComponent(GLERL_TEXT_URL + "&t=" + ts));
-            const html = await res.text();
-            const start = html.indexOf("YYYY-MM-DD");
-            if (start !== -1) {
-                const lines = html.substring(start).split('\n').filter(l => l.trim().length > 0).slice(2);
-                let rows = "";
-                lines.forEach(line => {
-                    const p = line.trim().split(/\s+/);
-                    if (p.length >= 7) {
-                        const timeStr = p[1];
-                        if (timeStr && timeStr.endsWith('0')) {
-                            const deg = parseFloat(p[4]);
-                            rows += `<tr>
-                                <td>${timeStr}</td>
-                                <td><b>${p[2]}</b></td>
-                                <td>${p[3]}</td>
-                                <td><div class="wind-cell"><span>${getCompassDirection(deg)}</span>${getWindArrow(deg)}</div></td>
-                                <td>${Math.round(p[5])}°F</td>
-                                <td>${Math.round(p[6])}°F</td>
-                            </tr>`;
-                        }
-                    }
-                });
-                document.getElementById('table-body').innerHTML = rows;
-                document.getElementById('header-update-time').textContent = "Obs Updated: " + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            }
-        } catch (e) { console.error(e); }
-
         document.getElementById('webcam-01').src = GLERL_BASE + "chi01.jpg?t=" + ts;
         document.getElementById('webcam-03').src = GLERL_BASE + "chi03.jpg?t=" + ts;
     }
@@ -305,10 +212,7 @@
             if (lines.length > 2) {
                 const latest = lines[2].trim().split(/\s+/);
                 
-                // NDBC Realtime format: #YY  MM DD hh mm WDIR WSPD GST  WVHT  DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE
-                // Index:                0   1  2  3  4  5    6    7    8     9     10  11    12    13    14    15    16  17    18
-                
-                const formatWind = (speed, dir) => {
+                const formatWind = (speed) => {
                     if (speed === "MM") return "--";
                     const knots = (parseFloat(speed) * 1.94384).toFixed(1);
                     return `${knots}kt`;
@@ -334,7 +238,6 @@
 
                 // Update Table (Historical)
                 let rows = "";
-                // Skip headers, take last 20 observations
                 const history = lines.slice(2, 22);
                 history.forEach(line => {
                     const p = line.trim().split(/\s+/);
@@ -359,68 +262,61 @@
     }
 
     async function updateForecast() {
-    const ts = new Date().getTime();
-    try {
-        const res = await fetch(PROXY + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt?t=" + ts));
-        let txt = await res.text();
-        
-        // 1. Find the starting marker
-        const marker = "Wilmette Harbor";
-        if (txt.indexOf(marker) !== -1) {
-            txt = txt.substring(txt.indexOf(marker));
-        }
-
-        // 2. Remove everything after the $$ delimiter
-        if (txt.indexOf("$$") !== -1) {
-            txt = txt.split("$$")[0];
-        }
-
-        const lines = txt.split('\n');
-        let result = "";
-        let inForecastBody = false;
-        let currentParagraph = "";
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-
-            const isTimestamp = /^\d{3,4} [AP]M [A-Z]{3}/.test(line);
-            const isAdvisory = line.startsWith('...') && line.endsWith('...');
-            const isForecastLabel = /^\.[A-Z\s]+\.\.\./.test(line);
-
-            if (isTimestamp) inForecastBody = true;
-
-            if (!inForecastBody) {
-                result += line + "\n";
-            } else if (isTimestamp || isAdvisory) {
-                if (currentParagraph) {
-                    result += currentParagraph.trim() + "\n\n";
-                    currentParagraph = "";
-                }
-                result += line + "\n" + (isTimestamp ? "\n" : "");
-            } else if (isForecastLabel) {
-                if (currentParagraph) result += currentParagraph.trim() + "\n\n";
-                currentParagraph = line + " ";
-            } else {
-                currentParagraph += line + " ";
+        const ts = new Date().getTime();
+        try {
+            const res = await fetch(PROXY + encodeURIComponent("https://tgftp.nws.noaa.gov/data/forecasts/marine/near_shore/lm/lmz741.txt?t=" + ts));
+            let txt = await res.text();
+            
+            const marker = "Wilmette Harbor";
+            if (txt.indexOf(marker) !== -1) {
+                txt = txt.substring(txt.indexOf(marker));
             }
-        }
-        if (currentParagraph) result += currentParagraph.trim();
 
-        document.getElementById('output').textContent = result.trim();
-    } catch (e) { 
-        console.error("Forecast update error:", e); 
+            if (txt.indexOf("$$") !== -1) {
+                txt = txt.split("$$")[0];
+            }
+
+            const lines = txt.split('\n');
+            let result = "";
+            let inForecastBody = false;
+            let currentParagraph = "";
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const isTimestamp = /^\d{3,4} [AP]M [A-Z]{3}/.test(line);
+                const isAdvisory = line.startsWith('...') && line.endsWith('...');
+                const isForecastLabel = /^\.[A-Z\s]+\.\.\./.test(line);
+
+                if (isTimestamp) inForecastBody = true;
+
+                if (!inForecastBody) {
+                    result += line + "\n";
+                } else if (isTimestamp || isAdvisory) {
+                    if (currentParagraph) {
+                        result += currentParagraph.trim() + "\n\n";
+                        currentParagraph = "";
+                    }
+                    result += line + "\n" + (isTimestamp ? "\n" : "");
+                } else if (isForecastLabel) {
+                    if (currentParagraph) result += currentParagraph.trim() + "\n\n";
+                    currentParagraph = line + " ";
+                } else {
+                    currentParagraph += line + " ";
+                }
+            }
+            if (currentParagraph) result += currentParagraph.trim();
+
+            document.getElementById('output').textContent = result.trim();
+        } catch (e) { 
+            console.error("Forecast update error:", e); 
+        }
     }
-}
 
     updateObservations();
     updateForecast();
     updateBuoyData();
-
-    // Flip card logic
-    setInterval(() => {
-        document.getElementById('crib-flip-card').classList.toggle('flipped');
-    }, 15000);
 
     setInterval(updateObservations, 5 * 60 * 1000); 
     setInterval(updateForecast, 10 * 60 * 1000);
